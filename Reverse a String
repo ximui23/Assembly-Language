@@ -1,0 +1,30 @@
+; Reverse The String
+
+.386
+.model flat,stdcall
+.stack 4096
+ExitProcess proto,dwExitCode:dword
+
+.data
+
+source BYTE "This is the source string", 0
+target BYTE SIZEOF source DUP('#')
+.code
+main proc
+
+	mov ecx, LENGTHOF source
+	mov ebx, 0
+L1:
+	mov al, source[ecx - 1]
+	mov target[ebx], al
+	inc ebx
+
+	LOOP L1
+
+	;copy that value to the beginning of target string
+	; loop until we get to beginning of source string
+
+	invoke ExitProcess,0
+main endp
+end main
+
