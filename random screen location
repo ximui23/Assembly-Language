@@ -1,0 +1,54 @@
+
+INCLUDE irvine32.inc
+.386
+.model flat,stdcall
+.stack 4096
+ExitProcess proto,dwExitCode:dword
+
+.data
+cols BYTE ?
+rows BYTE ?
+randX DWORD ?
+randY DWORD ?
+Message BYTE “WOW” , 0
+.code
+main proc
+
+	;get max xy
+	;put al, dl into rows and cols -> avoid uncontrolled change
+	
+	call GetMaxXY
+	mov rows, al
+	mov cols, dl
+
+	mov ecx, 100			;loop 100 times
+	RandLoop:
+	
+		movzx eax, cols				;get random cols - randX
+		call RandomRange
+		mov randX, eax
+
+		movzx eax, rows				;get random rows - randY
+		call RandomRange
+		mov randY, eax
+
+									;Use PTR to override the randX and randY (DWORD)
+									;mov higher bits operand to lower bit
+		mov dh, BYTE PTR randY				;syntax of PTR
+		mov dl, BYTE PTR randX
+		call Gotoxy
+
+
+		;mov al, 'A'					;print character
+		;call WriteChar
+
+
+		;print message at x,y
+		Mov edx, OFFSET message
+		Call WriteString
+
+	Loop RandLoop
+
+	invoke ExitProcess,0
+main endp
+end main
